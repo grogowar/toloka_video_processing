@@ -1,0 +1,126 @@
+<config>
+    <facedetector>
+        <detector>
+            <type>caffenet</type>
+            <id>MobileNetSSD_512</id>
+            <net>
+                <mark>MobileNetSSD_512</mark>
+                <threads_count>1</threads_count>
+                <deploy>MobileNetSSD_deploy_512.prototxt</deploy>
+                <model>MobileNetSSD_deploy_512.caffemodel</model>
+                <mean>127.5, 127.5, 127.5</mean>
+                <engine>caffe</engine>
+                <batch_size>1</batch_size>
+                <image_preprocessing>
+                    <force_grayscale>false</force_grayscale>
+                    <force_color>false</force_color>
+                    <equalize>false</equalize>
+                </image_preprocessing>
+            </net>
+
+            <add_border_max_ratio>2.0</add_border_max_ratio>
+            <score_threshold>0.7</score_threshold>
+            <minwindowsize>4</minwindowsize>    <!-- if v<1.0 then in persents (100*v%) else absolute value-->
+            <maxwindowsize>0.99</maxwindowsize>    <!-- if v<1.0 then in persents (100*v%) else absolute value-->
+        </detector>
+
+        <validator>
+            <type>hog_svm</type>
+            <id>face_validator_9_5_6_3</id>
+            <use_normalization>true</use_normalization>
+            <validator_mean>0.92</validator_mean>
+            <validator_std>1.75</validator_std>
+            <hog>
+                <orientations>3</orientations>
+                <pixels_per_cell_x>5</pixels_per_cell_x>
+                <pixels_per_cell_y>6</pixels_per_cell_y>
+                <cells_per_block_x>3</cells_per_block_x>
+                <cells_per_block_y>3</cells_per_block_y>
+            </hog>
+            <svm>
+                <model>face_linear_35633_c1.25_g0.5_eq_svm.yml</model>
+            </svm>
+        </validator>
+        <use_confidence>true</use_confidence>
+        <confidence_threshold>-1000.0</confidence_threshold>
+    </facedetector>
+
+    <facetracker>
+        <MultiTracker_minSizeFace>40</MultiTracker_minSizeFace>
+        <MultiTracker_exhaustiveTracking>false</MultiTracker_exhaustiveTracking>
+        <MultiTracker_detectionFrequency>4</MultiTracker_detectionFrequency>
+        <MultiTracker_minDetection>2</MultiTracker_minDetection>
+    </facetracker>
+
+    <landmarkengine>
+        <landmarkdetector>
+            <type>caffenet</type>
+            <net>
+                <mark>mtcnn_ldet3</mark>
+                <threads_count>1</threads_count>
+                <deploy>det3.prototxt</deploy>
+                <model>det3.caffemodel</model>
+                <mean>127.5, 127.5, 127.5</mean>
+                <engine>caffe</engine>
+                <batch_size>1</batch_size>
+                <image_preprocessing>
+                    <force_grayscale>false</force_grayscale>
+                    <force_color>false</force_color>
+                    <equalize>false</equalize>
+                </image_preprocessing>
+            </net>
+        </landmarkdetector>
+        <edge>fit</edge>
+        <expert_patch>dataa5_stc_4.dat</expert_patch>
+    </landmarkengine>
+
+    <identification>
+        <weights>1.0</weights>
+        <identification_net>
+            <face_parameters>223, 1.0, 1.0</face_parameters>
+            <net>
+                <mark>tpaminet3-ao256a</mark>
+                <threads_count>1</threads_count>
+                <deploy>tpaminet3-ao256a.prototxt</deploy>
+                <model>tpaminet3-ao256a.caffemodel</model>
+                <mean>127.5, 127.5, 127.5</mean>
+                <engine>caffe</engine>
+                <batch_size>1</batch_size>
+                <image_preprocessing>
+                    <force_grayscale>false</force_grayscale>
+                    <force_color>false</force_color>
+                    <equalize>false</equalize>
+                </image_preprocessing>
+            </net>
+            <features_postprocessing>
+            </features_postprocessing>
+            <score_to_prob>
+                <is_on>true</is_on>
+                <mean_targets>0.8886</mean_targets>
+                <mean_impostors>0.1818</mean_impostors>
+                <std_targets>0.2015</std_targets>
+                <std_impostors>0.2015</std_impostors>
+            </score_to_prob>
+            <validator>
+                <type>svm</type>
+                <id>tpaminet3-ao256a</id>
+                <svm>
+                    <model>tpaminet3-ao256a.yml</model>
+                </svm>
+                <threshold>0.0</threshold>
+            </validator>
+        </identification_net>
+    </identification>
+        
+    <livenessdetector>
+        <enabled>false</enabled>
+    </livenessdetector>
+
+    <videolivenessdetector>
+        <enabled>false</enabled>
+    </videolivenessdetector>
+
+    <photo_liveness>
+        <enabled>false</enabled>
+    </photo_liveness>
+</config>
