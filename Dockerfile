@@ -5,4 +5,5 @@ USER researcher
 COPY toloka_processing_profile.xml /home/researcher/SDK_data/profiles/toloka_processing_profile.xml
 COPY docker_code /code
 WORKDIR /code
+USER root
 ENTRYPOINT ["python3", "main.py"]
