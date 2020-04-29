@@ -6,4 +6,6 @@ COPY toloka_processing_profile.xml /home/researcher/SDK_data/profiles/toloka_pro
 COPY docker_code /code
 WORKDIR /code
 USER root
+RUN mkdir -p /root/.local/lib/python3.6/site-packages \
+    && cp /home/researcher/.local/lib/python3.6/site-packages/fsdk.pth /root/.local/lib/python3.6/site-packages/fsdk.pth
 ENTRYPOINT ["python3", "main.py"]
