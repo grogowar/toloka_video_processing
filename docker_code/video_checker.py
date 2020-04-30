@@ -4,6 +4,7 @@ import cv2
 import os
 import shutil
 from statistics import mean
+import settings
 
 
 class MyError(Exception):
@@ -109,7 +110,7 @@ class VideoChecker:
                 longest_track_length = track_length
         video_area = self.video_width * self.video_height
         longest_track_area = longest_track['average_width']*longest_track['average_height']
-        if longest_track_area/video_area < 0.15:
+        if longest_track_area/video_area < settings.face_percentage/100:
             raise MyError("Присутствующее в кадре лицо слишком маленькое.")
 
     def __delete_tmp_files(self):
