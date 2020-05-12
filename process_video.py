@@ -9,7 +9,8 @@ import sys
 def process(video_file):
     file = open(video_file, 'rb')
     files = {'video': (video_file, file)}
-    r = requests.post('http://127.0.0.1:8901/', files=files)
+    proxies = {'http': None, 'https': None}
+    r = requests.post('http://127.0.0.1:8901/', files=files, proxies=proxies)
     file.close()
     return r.text
 
