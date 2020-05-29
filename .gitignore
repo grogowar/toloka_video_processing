@@ -1,6 +1,4 @@
 venv
 .idea
-exclude-from
 __pycache__
-volumes
 1.py
