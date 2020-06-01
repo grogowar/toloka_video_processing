@@ -4,6 +4,7 @@ from s3fd_detector import S3FDDetector, Mode
 import os
 import shutil
 import settings
+import datetime
 
 
 class MyError(Exception):
@@ -15,6 +16,7 @@ class VideoChecker:
     tmp_dir = '/dev/shm'
     frames_with_face_count = 0
     frames_without_face_count = 0
+    log = ''
 
     def __init__(self):
         self.detector = S3FDDetector(model_path="s3fd_convert.pth", mode=Mode.GPU)
@@ -43,7 +45,14 @@ class VideoChecker:
             result = error.message
         finally:
             self.__delete_tmp_files()
-        return result
+        if settings.debug:
+            return self.log + '\n' + result
+        else:
+            return result
+
+    def __log(self, message):
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.log += '%s: %s\n' % (now, message)
 
     def __create_tmp_file(self, video):
         ext = self.__get_extension(video.filename)
@@ -67,13 +76,17 @@ class VideoChecker:
         self.fps = self.video_source.get(cv2.CAP_PROP_FPS)
 
     def __get_next_frame(self):
+        self.__log('before getting frame')
         ret, self.frame = self.video_source.read()
+        self.__log('after getting frame')
         return ret
 
     def __get_boxes(self):
         imgs = [self.frame]
+        self.__log('before getting boxes')
         boxes_batch = self.detector.detect(imgs)
         self.boxes = boxes_batch[0]
+        self.__log('after getting boxes, boxes: %s' % self.boxes)
 
     def __filter_boxes(self):
         i = len(self.boxes)
