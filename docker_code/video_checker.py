@@ -51,8 +51,8 @@ class VideoChecker:
             return result
 
     def __log(self, message):
-        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.log += '%s: %s\n' % (now, message)
+        time = datetime.datetime.now().strftime("%H:%M:%S")
+        self.log += '%s: %s\n' % (time, message)
 
     def __create_tmp_file(self, video):
         ext = self.__get_extension(video.filename)
@@ -76,9 +76,7 @@ class VideoChecker:
         self.fps = self.video_source.get(cv2.CAP_PROP_FPS)
 
     def __get_next_frame(self):
-        self.__log('before getting frame')
         ret, self.frame = self.video_source.read()
-        self.__log('after getting frame')
         return ret
 
     def __get_boxes(self):
@@ -96,6 +94,7 @@ class VideoChecker:
             box_area = box[2] * box[3]
             if box[4] < self.face_probability or box_area/self.video_area > self.face_area_ratio:
                 self.boxes.pop(i)
+        self.__log('after filtering boxes, boxes: %s' % self.boxes)
 
     def __single_face_check(self):
         if len(self.boxes) > 1:
