@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 from s3fd_detector import S3FDDetector, Mode
 import os
 import shutil
@@ -107,15 +106,9 @@ class VideoChecker:
 
     def __duration_check(self):
         frames_count = self.frames_with_face_count + self.frames_without_face_count
-        self.__log('frames_count: %s, self.frames_with_face_count: %s, self.frames_without_face_count: %s, '
-                   'self.frames_with_face_count/frames_count: %s, self.frames_with_face_ratio: %s, '
-                   'self.fps: %s'
-                   % (frames_count, self.frames_with_face_count, self.frames_without_face_count,
-                      self.frames_with_face_count/frames_count, self.frames_with_face_ratio, self.fps))
         if self.frames_with_face_count/frames_count < self.frames_with_face_ratio:
             raise MyError("На видео меньше %d%% кадров с лицами" % settings.frames_with_face_percentage)
         duration_with_faces = self.frames_with_face_count / self.fps
-        self.__log('duration_with_faces: %s' % duration_with_faces)
         if duration_with_faces < settings.min_seconds_with_face:
             raise MyError("На видео суммарная длительность кадров с лицами < %d секунд."
                           % settings.min_seconds_with_face)
