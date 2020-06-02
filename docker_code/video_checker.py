@@ -91,12 +91,8 @@ class VideoChecker:
         while i > 0:
             i -= 1
             box = self.boxes[i]
-            self.__log('box: %s' % box)
             box_area = box[2] * box[3]
-            self.__log('box_area: %s, box[4]: %s, self.face_probability: %s, '
-                       'box_area/self.video_area: %s, self.face_area_ratio: %s'
-                       % (box_area, box[4], self.face_probability, box_area/self.video_area, self.face_area_ratio))
-            if box[4] < self.face_probability or box_area/self.video_area > self.face_area_ratio:
+            if box[4] < self.face_probability or box_area/self.video_area < self.face_area_ratio:
                 self.boxes.pop(i)
         self.__log('after filtering boxes, boxes: %s' % self.boxes)
 
