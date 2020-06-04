@@ -32,6 +32,11 @@ class VideoChecker:
             self.__get_video()
             self.__get_video_area()
             self.__get_fps()
+
+            self.__get_frames()
+            self.__get_boxes()
+            self.__filter_and_save_frame_info()
+            '''
             while True:
                 if not self.__get_next_frame():
                     break
@@ -39,6 +44,7 @@ class VideoChecker:
                 self.__filter_boxes()
                 self.__single_face_check()
                 self.__save_frame_info()
+            '''
             self.__duration_check()
         except MyError as error:
             result = error.message
@@ -74,17 +80,55 @@ class VideoChecker:
     def __get_fps(self):
         self.fps = self.video_source.get(cv2.CAP_PROP_FPS)
 
+    def __get_frames(self):
+        self.frames = []
+        while True:
+            ret, frame = self.video_source.read()
+            if not ret:
+                break
+            self.frames.append(frame)
+        if len(self.frames) == 0:
+            raise MyError("Видео не содержит ни одного кадра.")
+
+    '''
     def __get_next_frame(self):
         ret, self.frame = self.video_source.read()
         return ret
+    '''
 
+    def __get_boxes(self):
+        self.__log('before getting boxes')
+        self.boxes = self.detector.detect(self.frames)
+        self.__log('after getting boxes, boxes: %s' % self.boxes)
+
+    '''
     def __get_boxes(self):
         imgs = [self.frame]
         self.__log('before getting boxes')
         boxes_batch = self.detector.detect(imgs)
         self.boxes = boxes_batch[0]
         self.__log('after getting boxes, boxes: %s' % self.boxes)
+    '''
 
+    def __filter_and_save_frame_info(self):
+        for i in range(len(self.boxes)):
+            frame_boxes = self.boxes[i]
+            j = len(frame_boxes)
+            while j > 0:
+                j -= 1
+                box = frame_boxes[j]
+                box_area = box[2] * box[3]
+                if box[4] < self.face_probability or box_area / self.video_area < self.face_area_ratio:
+                    frame_boxes.pop(j)
+            length = len(frame_boxes)
+            if length > 1:
+                raise MyError("На видео присутствует более одного лица.")
+            elif length ==1:
+                self.frames_with_face_count += 1
+            else:
+                self.frames_without_face_count += 1
+
+    '''
     def __filter_boxes(self):
         i = len(self.boxes)
         while i > 0:
@@ -103,6 +147,7 @@ class VideoChecker:
             self.frames_with_face_count += 1
         else:
             self.frames_without_face_count += 1
+    '''
 
     def __duration_check(self):
         frames_count = self.frames_with_face_count + self.frames_without_face_count
