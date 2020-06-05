@@ -41,7 +41,7 @@
                 <model>face_linear_35633_c1.25_g0.5_eq_svm.yml</model>
             </svm>
         </validator>
-        <use_confidence>true</use_confidence>
+        <use_confidence>false</use_confidence>
         <confidence_threshold>-1000.0</confidence_threshold>
     </facedetector>
 
