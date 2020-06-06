@@ -89,7 +89,7 @@ class VideoChecker:
                                              img_color_type=pyFSDK.core_types.ColorType.RGB, color_image=True,
                                              rotate=False, copy_data=True)
         self.boxes = self.detector.detect(fsdk_image, -1, -1, fsdk_image.default_roi())
-        self.__log('boxes: %s' % self.boxes)
+        #self.__log('boxes: %s' % self.boxes)
 
     def __filter_boxes(self):
         i = len(self.boxes)
@@ -98,7 +98,7 @@ class VideoChecker:
             box = self.boxes[i]
             if box[1] < self.face_probability:
                 self.boxes.pop(i)
-        self.__log('boxes after filtering: %s' % self.boxes)
+        #self.__log('boxes after filtering: %s' % self.boxes)
 
     def __single_face_check(self):
         if len(self.boxes) > 1:
